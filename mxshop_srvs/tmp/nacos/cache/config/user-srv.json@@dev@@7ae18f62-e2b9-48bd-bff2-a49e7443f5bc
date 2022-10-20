@@ -1,0 +1,17 @@
+{
+    "name": "user-srv",
+    "host": "10.2.91.218",
+    "port": 8081,
+     "consul":{
+        "host": "10.2.91.218",
+        "port": 8500
+    },
+    "mysql":{
+        "host": "127.0.0.1",
+        "port": 3306,
+        "db": "mxshop_user_srv",
+        "user": "root",
+        "password": "Qq/2013XiaoKUang"
+    }
+}
+  
