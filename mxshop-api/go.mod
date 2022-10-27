@@ -17,7 +17,7 @@ require (
 	github.com/mojocn/base64Captcha v1.3.5
 	github.com/nacos-group/nacos-sdk-go v1.1.1
 	github.com/pelletier/go-toml/v2 v2.0.2 // indirect
-	github.com/satori/go.uuid v1.2.0 // indirect
+	github.com/satori/go.uuid v1.2.0
 	github.com/spf13/viper v1.12.0
 	go.uber.org/zap v1.21.0
 	golang.org/x/crypto v0.0.0-20220622213112-05595931fe9d // indirect
