@@ -1,0 +1,32 @@
+{
+  "name": "user-web",
+  "port": 8081,
+  "user_srv": {
+    "name": "user_srv",
+    "host": "192.168.3.105",
+    "port": 8080
+  },
+  "jwt": {
+    "key": "2Fsa$Xx2WpTOI^Yl!FwohPd6XmVCdnQi"
+  },
+  "sms": {
+    "key": "LTAI5tCjkwb5rRfZtUmHRo3a",
+    "secret": "AaRNRBSeTzplpIzaDIYprdnvsIvZCZ"
+  },
+  "params": {
+    "sign_name": "生鲜小店",
+    "code": "SMS_244610581"
+  },
+  "redis": {
+    "host": "127.0.0.1",
+    "port": 6379,
+    "expir": 300
+  },
+  "verify": {
+    "width": 5
+  },
+  "consul": {
+    "host": "192.168.3.105",
+    "port": 8500
+  }
+}
