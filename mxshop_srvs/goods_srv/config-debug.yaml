@@ -1,0 +1,24 @@
+#name: 'goods_srv'
+#host: '192.168.3.105'
+#port: 8080
+#mysql:
+#  host: '127.0.0.1'
+#  port: 3306
+#  db: 'mxshop_goods_srv'
+#  user: 'root'
+#  password: 'Qq/2013XiaoKUang'
+#
+#consul:
+#  host: '192.168.3.105'
+#  port: 8500
+#
+
+nacos:
+  host: '10.2.98.74'
+  port: 8848
+  namespace_id: 'fe432146-9559-44d1-8245-3541feacc9cf'
+  user: 'nacos'
+  password: 'nacos'
+  data_id: 'goods-srv.json'
+  group: 'dev'
+
