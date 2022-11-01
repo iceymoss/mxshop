@@ -1,0 +1,24 @@
+#name: 'inventory_srv'
+#host: '192.168.3.105'
+#port: 8080
+#mysql:
+#  host: '127.0.0.1'
+#  port: 3306
+#  db: 'mxshop_inventory_srv'
+#  user: 'root'
+#  password: 'Qq/2013XiaoKUang'
+#
+#consul:
+#  host: '192.168.3.105'
+#  port: 8500
+#
+
+nacos:
+  host: '10.2.119.116'
+  port: 8848
+  namespace_id: '3ecfe162-5701-4759-81e2-2f494e97db06'
+  user: 'nacos'
+  password: 'nacos'
+  data_id: 'inventory-srv.json'
+  group: 'dev'
+
