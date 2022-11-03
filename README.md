@@ -1,8 +1,9 @@
 
 # mxshop电商系统
-### 主要技术栈：Go、Grpc、Gin、Mysql、Redis、Elasticsearch、RocketMQ
+### 主要技术栈：Go、Grpc、Gin、Mysql、Redis、Elasticsearch、RocketMQ、Nacos、Consul
 ### 功能介绍
-* 登录/注册功能：采用sever和web双层架构、使用viper包做配置解析、使用redis实现注册验证码缓存服务、使用base生成验证码图片、使用MD5盐值加密保证密码只有注册者知道
+
+* 登录/注册功能：采用sever和web双层架构、使用viper包做配置解析、web层基于Gin做路由转发、使用redis实现注册验证码缓存服务、使用base64生成验证码图片做登录验证、srv层使用MD5盐值加密保证密码注册者知道的唯一性
 
 * 商品服务功能：基于Elasticsearch实现商品搜索；完成如下接口：1.商品相关、2.商品品牌相关、3.商品分类类目相关、4.商品分类相关、5.商品主页轮播图相关
 * 库存服务：库存服务的核心在于保持数据的一致性，可用性，高性能，解决在分布式高并发场景下，如何保证数据一致性，库存服务引入了Redis锁和RocketMQ，来实现分布式高并发场景下的数据一致性，如何扣减库存，库存超时归还，重复归还商品问题以及接口需要幂等性
