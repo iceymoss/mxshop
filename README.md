@@ -1,7 +1,7 @@
 
 # mxshop电商系统
 ### 主要技术栈：Go、Grpc、Gin、Mysql、Redis、Elasticsearch、RocketMQ、Nacos、Consul
-### Consul的安装
+### Consul的安装(docker)
 ```shell
 docker run -d -p 8500:8500 -p 8300:8300 -p 8301:8301 -p 8302:8302 -p 8600:8600/udp  consul consul agent  -dev -client=0.0.0.0
 ```
@@ -11,7 +11,7 @@ docker container update --restart=always 容器名字
 ```
 浏览器访问 127.0.0.1:8500
 
-### Nacos的安装
+### Nacos的安装(docker)
 ```shell
 docker run --name nacos-standalone -e MODE=standalone -e JVM_XMS=512m -e JVM_XMX=512m -e JVM_XMN=256m -p 8848:8848 -d nacos/nacos-server:latest
 ```
@@ -23,10 +23,8 @@ docker run --name nacos-standalone -e MODE=standalone -e JVM_XMS=512m -e JVM_XMX
  docker container update --restart=always xxx
 ```
 
-### Elasticsearch的安装：
+### Elasticsearch的安装(docker)
 [Elasticsearch安装](https://learnku.com/articles/72845)
-
-
 
 ### 功能介绍
 
