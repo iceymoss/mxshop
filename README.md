@@ -27,6 +27,7 @@ docker run --name nacos-standalone -e MODE=standalone -e JVM_XMS=512m -e JVM_XMX
 [Elasticsearch安装](https://learnku.com/articles/72845)
 
 ### 功能介绍
+* 基于JWT做访问鉴权token，Gin做路由分发、表单验证、解决跨域等
 
 * 登录/注册功能：采用sever和web双层架构、使用viper包做配置解析、web层基于Gin做路由转发、使用redis实现注册验证码缓存服务、使用base64生成验证码图片做登录验证、srv层使用MD5盐值加密保证密码注册者知道的唯一性
 
