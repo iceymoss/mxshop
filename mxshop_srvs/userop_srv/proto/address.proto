@@ -1,0 +1,37 @@
+syntax = "proto3";
+import "google/protobuf/empty.proto";
+option go_package = "/.;proto";
+
+service Address {
+    rpc GetAddressList(GetAddressRequest) returns (AddressListResponse); //获取收货地址
+    rpc CreateAddress(GetAddressRequest) returns (AddressResponse);      //新建收货地址
+    rpc UpdateAddress(GetAddressRequest) returns (google.protobuf.Empty); //更新收货地址
+    rpc DeleteAddress(GetAddressRequest) returns (google.protobuf.Empty); //删除收货地址
+}
+
+message GetAddressRequest {
+    int32 id = 1;
+    int32 userId  = 2;
+    string province = 3;
+    string city = 4;
+    string district = 5;
+    string address = 6;
+    string signerName = 7;
+    string signerMobile = 8;
+}
+
+message  AddressResponse{
+    int32 id = 1;
+    int32 userId = 2;
+    string province = 3;
+    string city = 4;
+    string district = 5;
+    string address = 6;
+    string signerName = 7;
+    string signerMobile = 8;
+}
+
+message AddressListResponse {
+    int32 total = 1;
+    repeated AddressResponse data = 2;
+}
