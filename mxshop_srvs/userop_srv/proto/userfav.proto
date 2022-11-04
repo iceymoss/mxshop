@@ -1,0 +1,25 @@
+syntax = "proto3";
+import "google/protobuf/empty.proto";
+option go_package = "/.;proto";
+
+service UserFav{
+    rpc GetFavList(UserFavRequest) returns(UserFavListResponse); //过滤收藏信息
+    rpc AddUserFav(UserFavRequest) returns(google.protobuf.Empty); //添加收藏
+    rpc DeleteUserFav(UserFavRequest) returns(google.protobuf.Empty); //删除收藏
+    rpc GetUserFavDetail(UserFavRequest) returns(google.protobuf.Empty); //查看用户是否已经收藏某件商品
+}
+
+message UserFavRequest{
+    int32 userId = 1;
+    int32 goodsId = 2;
+}
+message UserFavResponse{
+    int32 userId = 1;
+    int32 goodsId = 2;
+}
+
+message UserFavListResponse {
+    int32 total = 1;
+    repeated UserFavResponse data = 2;
+}
+
