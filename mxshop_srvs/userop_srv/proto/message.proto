@@ -1,0 +1,31 @@
+syntax = "proto3";
+option go_package = "/.;proto";
+
+service Message {
+    rpc GetMessageList(MessageRequest) returns (MessageListResponse); //获取留言列表
+    rpc CreateMessage(MessageRequest) returns (MessageResponse); //新建留言
+
+}
+
+message MessageRequest {
+    int32 id = 1;
+    int32 userId = 2;
+    int32 messageType = 3;
+    string subject = 4;
+    string message = 5;
+    string file = 6;
+}
+
+message MessageResponse {
+    int32 id = 1;
+    int32 userId = 2;
+    int32 messageType = 3;
+    string subject = 4;
+    string message = 5;
+    string file = 6;
+}
+
+message MessageListResponse {
+    int32 total = 1;
+    repeated MessageResponse data = 2;
+}
