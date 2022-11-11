@@ -1,0 +1,21 @@
+{
+    "name": "userop-srv",
+    "host": "10.2.105.13",
+    "port": 8085,
+    "mysql":{
+        "host": "127.0.0.1",
+        "port": 3306,
+        "db": "mxshop_userop_srv",
+        "user": "root",
+        "password": "Qq/2013XiaoKUang"
+    },
+    "consul":{
+        "host": "10.2.105.13",
+        "port": 8500
+    },
+    "redis":{
+        "host": "127.0.0.1",
+        "port": 6379
+    },
+    "tags":["iceymoss", "userop", "golang", "srv"]
+}

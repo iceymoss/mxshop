@@ -1,0 +1,27 @@
+{
+    "name": "inventory-srv",
+    "host": "10.2.69.164",
+    "port": 8084,
+    "mysql":{
+        "host": "127.0.0.1",
+        "port": 3306,
+        "db": "mxshop_inventory_srv",
+        "user": "root",
+        "password": "Qq/2013XiaoKUang"
+    },
+    "consul":{
+        "host": "10.2.69.164",
+        "port": 8500
+    },
+    "redis":{
+        "host": "127.0.0.1",
+        "port": 6379
+    },
+    "tags":["iceymoss", "inventory", "golang", "srv"],
+    "rocket":{
+        "host": "1.14.180.202",
+        "port": 9876,
+        "group_name": "mxshop-inventory",
+        "topic":"order-reback"
+    }
+}

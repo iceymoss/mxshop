@@ -4,10 +4,13 @@ import (
 	"flag"
 	"fmt"
 	"log"
+	"mxshop_srvs/order_srv/utils/otgrpc"
 	"net"
 	"os"
 	"os/signal"
 	"syscall"
+
+	"github.com/opentracing/opentracing-go"
 
 	"github.com/apache/rocketmq-client-go/v2"
 	"github.com/apache/rocketmq-client-go/v2/consumer"
@@ -21,6 +24,8 @@ import (
 	"mxshop_srvs/order_srv/utils/register/consul"
 
 	uuid "github.com/satori/go.uuid"
+	"github.com/uber/jaeger-client-go"
+	jaegercfg "github.com/uber/jaeger-client-go/config"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/health"
@@ -51,6 +56,7 @@ func main() {
 	flag.Parse()
 
 	zap.S().Info(global.ServerConfig)
+	zap.S().Info("链路追踪：", global.ServerConfig.Tracing)
 	//监听端口
 	zap.S().Info("ip:", *IP)
 	if *Port == 0 {
@@ -63,8 +69,29 @@ func main() {
 		log.Fatal("监听端口失败", err)
 	}
 
+	//初始化jaeger对象
+	cfg := jaegercfg.Configuration{
+		Sampler: &jaegercfg.SamplerConfig{
+			Type:  jaeger.SamplerTypeConst,
+			Param: 1,
+		},
+		Reporter: &jaegercfg.ReporterConfig{
+			LogSpans:           true,
+			LocalAgentHostPort: fmt.Sprintf("%s:%d", global.ServerConfig.Tracing.Host, global.ServerConfig.Tracing.Port),
+		},
+		ServiceName: global.ServerConfig.Tracing.Name,
+	}
+
+	tracer, closer, err := cfg.NewTracer(jaegercfg.Logger(jaeger.StdLogger))
+	if err != nil {
+		panic(err)
+	}
+
+	//设置tracer
+	opentracing.SetGlobalTracer(tracer)
+
 	//实例server
-	s := grpc.NewServer()
+	s := grpc.NewServer(grpc.UnaryInterceptor(otgrpc.OpenTracingServerInterceptor(tracer)))
 	//注册处理逻辑
 	proto.RegisterOrderServer(s, &handler.OrderServer{})
 
@@ -116,7 +143,8 @@ func main() {
 	//接收control+c
 	signal.Notify(qiut, syscall.SIGINT, syscall.SIGTERM)
 	<-qiut
-
+	//
+	closer.Close()
 	err = registry_client.DeRegister(serverIdstr)
 	if err != nil {
 		zap.S().Info("注销失败", err)

@@ -1,0 +1,17 @@
+{
+  "name": "user_srv",
+  "host": "10.2.111.34",
+  "port": 8080,
+  "mysql": {
+    "host": "127.0.0.1",
+    "port": 3306,
+    "db": "mxshop_user_srv",
+    "user": "root",
+    "password": "Qq/2013XiaoKUang"
+  },
+  "consul": {
+    "host": "10.2.111.34",
+    "port": 8500
+  },
+  "tags":["goods, ice_moss, server"]
+}

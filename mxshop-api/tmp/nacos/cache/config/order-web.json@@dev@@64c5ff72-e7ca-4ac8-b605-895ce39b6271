@@ -1,0 +1,38 @@
+{
+    "name": "order-web",
+    "host": "10.2.69.164",
+    "port": 9093,
+    "tags":["iceymoss", "order", "golang", "srv"],
+    "goods_srv":{
+        "name": "goods-srv",
+        "host": "10.2.69.164",
+        "port": 8082
+    },
+    "order_srv":{
+        "name":"order-srv",
+        "host": "10.2.69.164",
+        "port": 8083
+    },
+    "inventory_srv":{
+        "name": "inventory-srv",
+        "host": "10.2.69.164",
+        "port": 8084
+    },
+    "jwt":{
+        "key": "2Fsa$Xx2WpTOI^Yl!FwohPd6XmVCdnQi"
+    },
+    "sms":{
+        "key": "LTAI5tCjkwb5rRfZtUmHRo3a",
+        "secret": "AaRNRBSeTzplpIzaDIYprdnvsIvZCZ"
+    },
+    "consul":{
+        "host": "10.2.69.164",
+        "port": 8500
+    },
+    "tracing":{
+        "host": "127.0.0.1",
+        "port": 6831,
+        "name": "mxshop"
+    }
+
+}

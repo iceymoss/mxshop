@@ -30,12 +30,15 @@ func main() {
 	//3. 初始化Router
 	Router := initialize.Routers()
 
-	//4. 初始化翻译
+	//4. 初始化限流\熔断降级
+	initialize.InitSentinel()
+
+	//5. 初始化翻译
 	if err := initialize.InitTrans("zh"); err != nil {
 		panic(err)
 	}
 
-	//5. 初始化grpc Client
+	//6. 初始化grpc Client
 	initialize.InitSrvConn()
 
 	//将线上线下address隔离，固定本地端口，线上动态端口

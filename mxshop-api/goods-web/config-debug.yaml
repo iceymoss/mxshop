@@ -29,9 +29,9 @@
 #  port: 8500
 
 
-host: '10.2.94.231'
+host: '10.2.69.164'
 port: 8848
-namespace_id: '1667c9ca-e13b-46b8-aa9f-a376de301f6f'
+namespace_id: 'fe432146-9559-44d1-8245-3541feacc9cf'
 user: 'nacos'
 password: 'nacos'
 data_id: 'goods-web.json'

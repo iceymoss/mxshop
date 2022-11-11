@@ -7,6 +7,8 @@ import (
 	"math/rand"
 	"time"
 
+	"github.com/opentracing/opentracing-go"
+
 	"mxshop_srvs/order_srv/global"
 	"mxshop_srvs/order_srv/model"
 	"mxshop_srvs/order_srv/proto"
@@ -119,10 +121,11 @@ func (O *OrderServer) DeleteCartItem(ctx context.Context, req *proto.CartItemReq
 
 //OrderListener 发送消息 可靠消息传送，基于rocketmq的延时机制，对订单支付状态检查以及及时归还库存
 type OrderListener struct {
-	Code        codes.Code //返回状态码
-	Detail      string     //返回状态描述
-	ID          int32      //订单id
-	OrderAmount float32    //订单总金额
+	Code        codes.Code      //返回状态码
+	Detail      string          //返回状态描述
+	ID          int32           //订单id
+	OrderAmount float32         //订单总金额
+	Ctx         context.Context //上下文数据
 }
 
 //ExecuteLocalTransaction  When send transactional prepare(half) message succeed, this method will be invoked to execute local transaction.
@@ -134,6 +137,9 @@ func (o *OrderListener) ExecuteLocalTransaction(msgs *primitive.Message) primiti
 	//4.订单的基本信息表 和订单的商品信息表
 	//5.从购物车中删除已购买记录
 
+	//接收上下文数据链路追踪
+	parentSpan := opentracing.SpanFromContext(o.Ctx)
+
 	fmt.Println("开始执行本地事务")
 	var OrderInfo model.OrderInfo
 	_ = json.Unmarshal(msgs.Body, &OrderInfo)
@@ -142,18 +148,27 @@ func (o *OrderListener) ExecuteLocalTransaction(msgs *primitive.Message) primiti
 	var goodsIds []int32
 	var shopCartList []model.ShoppingCart
 	goodsNumsMap := make(map[int32]int32)
+
+	//开始追踪
+	shoppingTracer := opentracing.GlobalTracer().StartSpan("select_shopping_cart", opentracing.ChildOf(parentSpan.Context()))
+
 	if result := global.DB.Where(&model.ShoppingCart{User: OrderInfo.User, Checked: true}).Find(&shopCartList); result.RowsAffected == 0 {
 		//将数据返回至实现者结构体
 		o.Code = codes.InvalidArgument
 		o.Detail = "没有选择结算的商品"
-
 		return primitive.RollbackMessageState
 	}
+
+	//结束当前追踪
+	shoppingTracer.Finish()
 
 	for _, shopCart := range shopCartList {
 		goodsIds = append(goodsIds, shopCart.Goods)
 		goodsNumsMap[shopCart.Goods] = shopCart.Nums
 	}
+
+	//开始追踪
+	queryGoodsSpan := opentracing.GlobalTracer().StartSpan("query_goods", opentracing.ChildOf(parentSpan.Context()))
 
 	//2. 去查询商品服务(跨服务),批量查询
 	Goods, err := global.GoodsSrvClient.BatchGetGoods(context.Background(), &proto.BatchGoodsIdInfo{
@@ -165,6 +180,8 @@ func (o *OrderListener) ExecuteLocalTransaction(msgs *primitive.Message) primiti
 
 		return primitive.RollbackMessageState
 	}
+
+	queryGoodsSpan.Finish()
 
 	//总价
 	var orderAmount float32
@@ -185,6 +202,9 @@ func (o *OrderListener) ExecuteLocalTransaction(msgs *primitive.Message) primiti
 		})
 	}
 
+	//开始追踪
+	queryInvSpan := opentracing.GlobalTracer().StartSpan("query_inventory", opentracing.ChildOf(parentSpan.Context()))
+
 	//3. 调用库存服务扣减库存(跨服务)
 	_, err = global.InventorySrvClient.Sell(context.Background(), &proto.SellInfo{
 		GoodsInfo: GoodsInfo,
@@ -197,11 +217,15 @@ func (o *OrderListener) ExecuteLocalTransaction(msgs *primitive.Message) primiti
 		return primitive.RollbackMessageState
 	}
 
+	queryInvSpan.Finish()
+
 	//需要事务逻辑
 	tx := global.DB.Begin()
 
 	OrderInfo.OrderMount = orderAmount
 
+	//开始追踪
+	querySaveSpan := opentracing.GlobalTracer().StartSpan("query_Save", opentracing.ChildOf(parentSpan.Context()))
 	if result := tx.Save(&OrderInfo); result.RowsAffected == 0 {
 		//业务回滚
 		tx.Rollback()
@@ -212,6 +236,8 @@ func (o *OrderListener) ExecuteLocalTransaction(msgs *primitive.Message) primiti
 
 	}
 
+	querySaveSpan.Finish()
+
 	o.OrderAmount = orderAmount
 	o.ID = OrderInfo.ID
 
@@ -219,6 +245,8 @@ func (o *OrderListener) ExecuteLocalTransaction(msgs *primitive.Message) primiti
 	for _, orderGood := range orderGoods {
 		orderGood.Order = OrderInfo.ID
 	}
+
+	queryBatchSpan := opentracing.GlobalTracer().StartSpan("query_batch", opentracing.ChildOf(parentSpan.Context()))
 
 	//批量插入
 	if result := tx.CreateInBatches(orderGoods, 100); result.RowsAffected == 0 {
@@ -229,6 +257,10 @@ func (o *OrderListener) ExecuteLocalTransaction(msgs *primitive.Message) primiti
 		return primitive.CommitMessageState
 	}
 
+	queryBatchSpan.Finish()
+
+	queryDeleteSpan := opentracing.GlobalTracer().StartSpan("query_delete", opentracing.ChildOf(parentSpan.Context()))
+
 	//清空购物车
 	if result := tx.Where(&model.ShoppingCart{User: OrderInfo.User, Checked: true}).Delete(&model.ShoppingCart{}); result.RowsAffected == 0 {
 		tx.Rollback()
@@ -236,6 +268,8 @@ func (o *OrderListener) ExecuteLocalTransaction(msgs *primitive.Message) primiti
 		o.Detail = "清空购物车失败"
 		return primitive.CommitMessageState
 	}
+
+	queryDeleteSpan.Finish()
 
 	//发送延时消息
 	//超时回查
@@ -285,7 +319,7 @@ func (O *OrderServer) CreateOrder(ctx context.Context, req *proto.OrderRequest) 
 	//使用消息队列,将扣减库存消息放入mq中
 
 	//初始化生产者
-	orderListener := OrderListener{}
+	orderListener := OrderListener{Ctx: ctx}
 	q, err := rocketmq.NewTransactionProducer(&orderListener,
 		producer.WithNameServer([]string{fmt.Sprintf("%s:%d", global.ServerConfig.MqInfo.Host, global.ServerConfig.MqInfo.Port)}))
 	if err != nil {

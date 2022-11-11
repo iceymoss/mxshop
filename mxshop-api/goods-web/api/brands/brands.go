@@ -2,6 +2,7 @@ package brands
 
 import (
 	"context"
+
 	"mxshop-api/goods-web/api"
 	"mxshop-api/goods-web/forms"
 	"mxshop-api/goods-web/global"
@@ -19,7 +20,7 @@ func BrandList(ctx *gin.Context) {
 	pSize := ctx.DefaultQuery("psize", "10")
 	pSizeInt, _ := strconv.Atoi(pSize)
 
-	rsp, err := global.GoodsSrvClient.BrandList(context.Background(), &proto.BrandFilterRequest{
+	rsp, err := global.GoodsSrvClient.BrandList(context.WithValue(context.Background(), "ginContext", ctx), &proto.BrandFilterRequest{
 		Pages:       int32(pnInt),
 		PagePerNums: int32(pSizeInt),
 	})
@@ -55,7 +56,7 @@ func NewBrand(c *gin.Context) {
 		return
 	}
 
-	Rsp, err := global.GoodsSrvClient.CreateBrand(context.Background(), &proto.BrandRequest{
+	Rsp, err := global.GoodsSrvClient.CreateBrand(context.WithValue(context.Background(), "ginContext", c), &proto.BrandRequest{
 		Name: BrandForm.Name,
 		Logo: BrandForm.Logo,
 	})
@@ -80,7 +81,7 @@ func DeleteBrand(ctx *gin.Context) {
 		ctx.Status(http.StatusNotFound)
 		return
 	}
-	_, err = global.GoodsSrvClient.DeleteBrand(context.Background(), &proto.BrandRequest{Id: int32(i)})
+	_, err = global.GoodsSrvClient.DeleteBrand(context.WithValue(context.Background(), "ginContext", ctx), &proto.BrandRequest{Id: int32(i)})
 	if err != nil {
 		api.HandleGrpcErrToHttp(err, ctx)
 		return
@@ -104,7 +105,7 @@ func UpdateBrand(c *gin.Context) {
 		return
 	}
 
-	_, err = global.GoodsSrvClient.UpdateBrand(context.Background(), &proto.BrandRequest{
+	_, err = global.GoodsSrvClient.UpdateBrand(context.WithValue(context.Background(), "ginContext", c), &proto.BrandRequest{
 		Id:   int32(id),
 		Name: UpdateBrandForm.Name,
 		Logo: UpdateBrandForm.Logo,
@@ -126,7 +127,7 @@ func GetCategoryBrand(c *gin.Context) {
 		return
 	}
 
-	Rsp, err := global.GoodsSrvClient.GetCategoryBrandList(context.Background(), &proto.CategoryInfoRequest{
+	Rsp, err := global.GoodsSrvClient.GetCategoryBrandList(context.WithValue(context.Background(), "ginContext", c), &proto.CategoryInfoRequest{
 		Id: int32(id),
 	})
 	if err != nil {
@@ -146,7 +147,7 @@ func GetCategoryBrandList(ctx *gin.Context) {
 		return
 	}
 
-	rsp, err := global.GoodsSrvClient.GetCategoryBrandList(context.Background(), &proto.CategoryInfoRequest{
+	rsp, err := global.GoodsSrvClient.GetCategoryBrandList(context.WithValue(context.Background(), "ginContext", ctx), &proto.CategoryInfoRequest{
 		Id: int32(i),
 	})
 	if err != nil {
@@ -175,7 +176,7 @@ func CategoryBrandList(ctx *gin.Context) {
 	pSize := ctx.DefaultQuery("psize", "10")
 	pSizeInt, _ := strconv.Atoi(pSize)
 
-	rsp, err := global.GoodsSrvClient.CategoryBrandList(context.Background(), &proto.CategoryBrandFilterRequest{
+	rsp, err := global.GoodsSrvClient.CategoryBrandList(context.WithValue(context.Background(), "ginContext", ctx), &proto.CategoryBrandFilterRequest{
 		Pages:       int32(pnInt),
 		PagePerNums: int32(pSizeInt),
 	})
@@ -217,7 +218,7 @@ func NewCategoryBrand(ctx *gin.Context) {
 		return
 	}
 
-	rsp, err := global.GoodsSrvClient.CreateCategoryBrand(context.Background(), &proto.CategoryBrandRequest{
+	rsp, err := global.GoodsSrvClient.CreateCategoryBrand(context.WithValue(context.Background(), "ginContext", ctx), &proto.CategoryBrandRequest{
 		CategoryId: int32(categoryBrandForm.CategoryId),
 		BrandId:    int32(categoryBrandForm.BrandId),
 	})
@@ -248,7 +249,7 @@ func UpdateCategoryBrand(ctx *gin.Context) {
 		return
 	}
 
-	_, err = global.GoodsSrvClient.UpdateCategoryBrand(context.Background(), &proto.CategoryBrandRequest{
+	_, err = global.GoodsSrvClient.UpdateCategoryBrand(context.WithValue(context.Background(), "ginContext", ctx), &proto.CategoryBrandRequest{
 		Id:         int32(i),
 		CategoryId: int32(categoryBrandForm.CategoryId),
 		BrandId:    int32(categoryBrandForm.BrandId),
@@ -268,7 +269,7 @@ func DeleteCategoryBrand(ctx *gin.Context) {
 		ctx.Status(http.StatusNotFound)
 		return
 	}
-	_, err = global.GoodsSrvClient.DeleteCategoryBrand(context.Background(), &proto.CategoryBrandRequest{Id: int32(i)})
+	_, err = global.GoodsSrvClient.DeleteCategoryBrand(context.WithValue(context.Background(), "ginContext", ctx), &proto.CategoryBrandRequest{Id: int32(i)})
 	if err != nil {
 		api.HandleGrpcErrToHttp(err, ctx)
 		return

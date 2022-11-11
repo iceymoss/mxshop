@@ -8,7 +8,7 @@ import (
 )
 
 func InitBanner(router *gin.RouterGroup) {
-	BannerRouter := router.Group("banners")
+	BannerRouter := router.Group("banners").Use(middlewares.Trace())
 	{
 		BannerRouter.GET("", banner.BannerList)                                                        //获取轮播图列表
 		BannerRouter.POST("", middlewares.JWTAuth(), middlewares.IsAdmin(), banner.NewBanner)          //添加轮播图

@@ -41,6 +41,12 @@ type ConsulConfig struct {
 	Port int    `mapstructure:"port" json:"port"`
 }
 
+type Tracing struct {
+	Host string `mapstructure:"host" json:"host"`
+	Port int    `mapstructure:"port" json:"port"`
+	Name string `mapstructure:"name" json:"name"`
+}
+
 //ServerConfig  映射服务配置
 type ServerConfig struct {
 	Name        string        `mapstructure:"name" json:"name"`
@@ -54,6 +60,7 @@ type ServerConfig struct {
 	Redis       RedisConfig   `mapstructure:"redis" json:"redis"`
 	Verify      Verifier      `mapstructure:"verify" json:"verify"`
 	ConsulInfo  ConsulConfig  `mapstructure:"consul" json:"consul"`
+	Tracing     Tracing       `mapstructure:"tracing" json:"tracing"`
 }
 
 //NacosConfig 配置中心配置

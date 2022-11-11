@@ -1,0 +1,24 @@
+#name: 'user_srv'
+#host: '192.168.3.105'
+#port: 8080
+#mysql:
+#  host: '127.0.0.1'
+#  port: 3306
+#  db: 'mxshop_user_srv'
+#  user: 'root'
+#  password: 'Qq/2013XiaoKUang'
+#
+#consul:
+#  host: '192.168.3.105'
+#  port: 8500
+#
+
+nacos:
+  host: '10.2.106.169'
+  port: 8848
+  namespace_id: '7ae18f62-e2b9-48bd-bff2-a49e7443f5bc'
+  user: 'nacos'
+  password: 'nacos'
+  data_id: 'user-srv.json'
+  group: 'dev'
+

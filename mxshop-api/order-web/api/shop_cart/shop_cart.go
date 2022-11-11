@@ -2,6 +2,7 @@ package shop_cart
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -10,6 +11,8 @@ import (
 	"mxshop-api/order-web/global"
 	"mxshop-api/order-web/proto"
 
+	sentinel "github.com/alibaba/sentinel-golang/api"
+	"github.com/alibaba/sentinel-golang/core/base"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 )
@@ -17,7 +20,18 @@ import (
 //List 用户获取购物车列表
 func List(ctx *gin.Context) {
 	userId, _ := ctx.Get("userId")
-	ShopCartRsp, err := global.OrderSrvClient.CartItemList(context.Background(), &proto.UserInfo{
+
+	//对商品列表进行限流
+	e, b := sentinel.Entry("shopping_cart_list", sentinel.WithTrafficType(base.Inbound))
+	if b != nil {
+		fmt.Println("限流了")
+		ctx.JSON(http.StatusTooManyRequests, gin.H{
+			"msg": "请求过于繁忙，请稍后重试",
+		})
+		return
+	}
+
+	ShopCartRsp, err := global.OrderSrvClient.CartItemList(context.WithValue(context.Background(), "ginContext", ctx), &proto.UserInfo{
 		Id: int32(userId.(uint)),
 	})
 	if err != nil {
@@ -25,6 +39,9 @@ func List(ctx *gin.Context) {
 		api.HandleGrpcErrToHttp(err, ctx)
 		return
 	}
+	//退出限流
+	e.Exit()
+
 	var goodsIdS []int32
 	for _, value := range ShopCartRsp.Data {
 		goodsIdS = append(goodsIdS, value.GoodsId)
@@ -38,7 +55,7 @@ func List(ctx *gin.Context) {
 		return
 	}
 
-	GoodsRsp, err := global.GoodsSrvClient.BatchGetGoods(context.Background(), &proto.BatchGoodsIdInfo{
+	GoodsRsp, err := global.GoodsSrvClient.BatchGetGoods(context.WithValue(context.Background(), "ginContext", ctx), &proto.BatchGoodsIdInfo{
 		Id: goodsIdS,
 	})
 	if err != nil {
@@ -82,8 +99,18 @@ func CreateCarItem(ctx *gin.Context) {
 		return
 	}
 
+	//对商品列表进行限流
+	e, b := sentinel.Entry("CreateCarItem", sentinel.WithTrafficType(base.Inbound))
+	if b != nil {
+		fmt.Println("限流了")
+		ctx.JSON(http.StatusTooManyRequests, gin.H{
+			"msg": "请求过于繁忙，请稍后重试",
+		})
+		return
+	}
+
 	//查询商品是否存在
-	_, err := global.GoodsSrvClient.GetGoodsDetail(context.Background(), &proto.GoodInfoRequest{
+	_, err := global.GoodsSrvClient.GetGoodsDetail(context.WithValue(context.Background(), "ginContext", ctx), &proto.GoodInfoRequest{
 		Id: cartItem.GoodsId,
 	})
 	if err != nil {
@@ -93,7 +120,7 @@ func CreateCarItem(ctx *gin.Context) {
 	}
 
 	//查询库存
-	InvGoods, err := global.InventorySrvClient.InvDetail(context.Background(), &proto.GoodsInventoryInfo{
+	InvGoods, err := global.InventorySrvClient.InvDetail(context.WithValue(context.Background(), "ginContext", ctx), &proto.GoodsInventoryInfo{
 		GoodsId: cartItem.GoodsId,
 	})
 	if err != nil {
@@ -111,7 +138,7 @@ func CreateCarItem(ctx *gin.Context) {
 	}
 
 	userId, _ := ctx.Get("userId")
-	CartItemRsp, err := global.OrderSrvClient.CreateCarItem(context.Background(), &proto.CartItemRequest{
+	CartItemRsp, err := global.OrderSrvClient.CreateCarItem(context.WithValue(context.Background(), "ginContext", ctx), &proto.CartItemRequest{
 		UserId:  int32(userId.(uint)),
 		GoodsId: cartItem.GoodsId,
 		Nums:    cartItem.Nums,
@@ -121,6 +148,9 @@ func CreateCarItem(ctx *gin.Context) {
 		api.HandleGrpcErrToHttp(err, ctx)
 		return
 	}
+
+	//退出限流
+	e.Exit()
 
 	ctx.JSON(http.StatusOK, gin.H{
 		"id": CartItemRsp.Id,
@@ -156,7 +186,7 @@ func UpdateCarItem(ctx *gin.Context) {
 		request.Checked = *ShopCartUpdateForm.Checked
 	}
 
-	_, err = global.OrderSrvClient.UpdateCartItem(context.Background(), &request)
+	_, err = global.OrderSrvClient.UpdateCartItem(context.WithValue(context.Background(), "ginContext", ctx), &request)
 	if err != nil {
 		zap.S().Info("更新购物车记录失败", err)
 		api.HandleGrpcErrToHttp(err, ctx)
@@ -179,7 +209,7 @@ func DeleteCarItem(ctx *gin.Context) {
 
 	userId, _ := ctx.Get("userId")
 
-	_, err = global.OrderSrvClient.DeleteCartItem(context.Background(), &proto.CartItemRequest{
+	_, err = global.OrderSrvClient.DeleteCartItem(context.WithValue(context.Background(), "ginContext", ctx), &proto.CartItemRequest{
 		GoodsId: int32(CartItemId),
 		UserId:  int32(userId.(uint)),
 	})

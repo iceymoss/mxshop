@@ -24,16 +24,25 @@ type ConsulConfig struct {
 	Port int    `mapstructure:"port" json:"port"`
 }
 
+//jaeter 配置
+type Tracing struct {
+	Host string `mapstructure:"host" json:"host"`
+	Port int    `mapstructure:"port" json:"port"`
+	Name string `mapstructure:"name" json:"name"`
+}
+
 //ServerConfig  映射服务配置
 type ServerConfig struct {
-	Name        string         `mapstructure:"name" json:"name"`
-	Host        string         `mapstructure:"host" json:"host"`
-	Port        int            `mapstructure:"port" json:"port"`
-	Tag         []string       `mapstructure:"tag" json:"tag"`
-	UserSerInfo GoodsSerConfig `mapstructure:"goods_srv" json:"goods_srv"`
-	JWTInfo     JWTConfig      `mapstructure:"jwt" json:"jwt"`
-	AliSms      AliSmsConfig   `mapstructure:"sms" json:"sms"`
-	ConsulInfo  ConsulConfig   `mapstructure:"consul" json:"consul"`
+	Name          string         `mapstructure:"name" json:"name"`
+	Host          string         `mapstructure:"host" json:"host"`
+	Port          int            `mapstructure:"port" json:"port"`
+	Tag           []string       `mapstructure:"tag" json:"tag"`
+	UserSerInfo   GoodsSerConfig `mapstructure:"goods_srv" json:"goods_srv"`
+	InventSerInfo GoodsSerConfig `mapstructure:"inventory_srv" json:"Inventory_srv"`
+	JWTInfo       JWTConfig      `mapstructure:"jwt" json:"jwt"`
+	AliSms        AliSmsConfig   `mapstructure:"sms" json:"sms"`
+	ConsulInfo    ConsulConfig   `mapstructure:"consul" json:"consul"`
+	Tracing       Tracing        `mapstructure:"tracing" json:"tracing"`
 }
 
 //NacosConfig 配置中心配置

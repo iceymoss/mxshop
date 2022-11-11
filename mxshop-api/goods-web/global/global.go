@@ -9,8 +9,9 @@ import (
 
 //需要的全局变量
 var (
-	Trans          ut.Translator                                 //声明一个全局翻译器
-	ServerConfig   *config.ServerConfig = &config.ServerConfig{} //声明配置信息
-	GoodsSrvClient proto.GoodsClient                             //grpc Client
-	NacosConfig    *config.NacosConfig  = &config.NacosConfig{}
+	Trans           ut.Translator                                  //声明一个全局翻译器
+	ServerConfig    *config.ServerConfig  = &config.ServerConfig{} //声明配置信息
+	GoodsSrvClient  proto.GoodsClient                              //商品 grpc Client
+	InventoryClient proto.InventoryClient                          //库存 grpc Client
+	NacosConfig     *config.NacosConfig   = &config.NacosConfig{}
 )

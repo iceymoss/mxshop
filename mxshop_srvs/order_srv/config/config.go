@@ -33,6 +33,13 @@ type MqConfig struct {
 	Topic     string `mapstructure:"topic" json:"topic"`
 }
 
+//Tracing 链路追踪
+type Tracing struct {
+	Host string `mapstructure:"host" json:"host"`
+	Port int    `mapstructure:"port" json:"port"`
+	Name string `mapstructure:"name" json:"name"`
+}
+
 //ServerConfig 服务配置
 type ServerConfig struct {
 	Name       string       `mapstructure:"name" json:"name"`
@@ -48,6 +55,7 @@ type ServerConfig struct {
 	//库存微服务
 	InventorySerInfo GoodsSerConfig `mapstructure:"inventory_srv" json:"inventory_srv"`
 	MqInfo           MqConfig       `mapstructure:"rocket" json:"rocket"`
+	Tracing          Tracing        `mapstructure:"tracing" json:"tracing"`
 }
 
 //NacosConfig 配置中心配置

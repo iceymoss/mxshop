@@ -8,7 +8,7 @@ import (
 )
 
 func InitCategory(router *gin.RouterGroup) {
-	CategoryRouter := router.Group("categorys")
+	CategoryRouter := router.Group("categorys").Use(middlewares.Trace())
 	{
 		CategoryRouter.GET("", category.List)                                                        //商品分类列表
 		CategoryRouter.GET("/:id", category.Detail)                                                  //获取商品分类详情

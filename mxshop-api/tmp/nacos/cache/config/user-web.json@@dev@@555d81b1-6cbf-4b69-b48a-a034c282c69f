@@ -1,0 +1,34 @@
+{
+  "name": "user-web",
+  "host": "10.2.111.34",
+  "port": 9095,
+  "tag": ["mxshop", "goods", "ice_moss", "web"],
+  "user_srv": {
+    "name": "user_srv",
+    "host": "10.2.111.34",
+    "port": 8080
+  },
+  "jwt": {
+    "key": "2Fsa$Xx2WpTOI^Yl!FwohPd6XmVCdnQi"
+  },
+  "sms": {
+    "key": "LTAI5tCjkwb5rRfZtUmHRo3a",
+    "secret": "AaRNRBSeTzplpIzaDIYprdnvsIvZCZ"
+  },
+  "params": {
+    "sign_name": "生鲜小店",
+    "code": "SMS_244610581"
+  },
+  "redis": {
+    "host": "127.0.0.1",
+    "port": 6379,
+    "expir": 300
+  },
+  "verify": {
+    "width": 5
+  },
+  "consul": {
+    "host": "10.2.111.34",
+    "port": 8500
+  }
+}
