@@ -1,0 +1,26 @@
+{
+  "name": "order_srv",
+  "host": "10.2.94.231",
+  "port": 8083,
+  "mysql": {
+    "host": "127.0.0.1",
+    "port": 3306,
+    "db": "mxshop_order_srv",
+    "user": "root",
+    "password": "Qq/2013XiaoKUang"
+  },
+  "consul": {
+    "host": "10.2.94.231",
+    "port": 8500
+  },
+  "redis":{
+    "host":"10.2.94.231",
+    "port":6379
+  },
+  "goods_srv":{
+    "name":"goods_srv"
+  },
+  "inventory_srv":{
+    "name":"inventory_srv"
+  }
+}

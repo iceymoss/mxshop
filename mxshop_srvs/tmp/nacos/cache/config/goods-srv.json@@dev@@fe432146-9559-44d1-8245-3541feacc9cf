@@ -1,0 +1,23 @@
+{
+    "name": "goods-srv",
+    "host": "10.2.69.164",
+    "port": 8082,
+    "mysql":{
+        "host": "127.0.0.1",
+        "port": 3306,
+        "db": "mxshop_goods_srv",
+        "user": "root",
+        "password": "Qq/2013XiaoKUang"
+    },
+    "consul":{
+        "host": "10.2.69.164",
+        "port": 8500
+    },
+    "es":{
+        "host": "127.0.0.1",
+        "port": 9200
+    },
+    "tags":["iceymoss", "goods", "golang", "srv"]
+}
+    
+

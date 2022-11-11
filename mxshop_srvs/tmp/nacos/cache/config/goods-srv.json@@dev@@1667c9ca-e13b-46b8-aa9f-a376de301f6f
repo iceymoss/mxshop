@@ -1,0 +1,16 @@
+{
+  "name": "goods_srv",
+  "host": "10.2.94.231",
+  "port": 8081,
+  "mysql": {
+    "host": "127.0.0.1",
+    "port": 3306,
+    "db": "mxshop_goods_srv",
+    "user": "root",
+    "password": "Qq/2013XiaoKUang"
+  },
+  "consul": {
+    "host": "10.2.94.231",
+    "port": 8500
+  }
+}
