@@ -14,7 +14,7 @@
 #
 
 nacos:
-  host: '10.2.119.116'
+  host: '10.2.69.164'
   port: 8848
   namespace_id: '3ecfe162-5701-4759-81e2-2f494e97db06'
   user: 'nacos'
