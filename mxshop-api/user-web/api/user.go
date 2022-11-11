@@ -83,7 +83,7 @@ func GetUserList(c *gin.Context) {
 	zap.S().Info("访问用户", currentUser.ID)
 
 	//调用grpc接口
-	rsp, err := global.UserClient.GetUserInfoList(context.Background(), &proto.PageInfo{
+	rsp, err := global.UserClient.GetUserInfoList(context.WithValue(context.Background(), "ginContext", c), &proto.PageInfo{
 		Pn:    uint32(PnInt),
 		Psize: uint32(PSizeInt),
 	})
@@ -130,7 +130,7 @@ func PassWordLogin(c *gin.Context) {
 
 	fmt.Println("电话号码：", PasswordLoginForm.Mobile)
 
-	rsp, err := global.UserClient.GetUserByMobile(context.Background(), &proto.MobileRequest{
+	rsp, err := global.UserClient.GetUserByMobile(context.WithValue(context.Background(), "ginContext", c), &proto.MobileRequest{
 		Mobile: PasswordLoginForm.Mobile,
 	})
 	if err != nil {
@@ -149,7 +149,7 @@ func PassWordLogin(c *gin.Context) {
 		}
 	} else {
 		//这里只是查询了用户，并没有查询密码
-		passRsp, passErr := global.UserClient.CheckPassWord(context.Background(), &proto.PasswordCheckInfo{
+		passRsp, passErr := global.UserClient.CheckPassWord(context.WithValue(context.Background(), "ginContext", c), &proto.PasswordCheckInfo{
 			Password:          PasswordLoginForm.Password,
 			EncryptedPassword: rsp.Password,
 		})
@@ -231,7 +231,7 @@ func Register(c *gin.Context) {
 		}
 	}
 
-	userRsp, err := global.UserClient.CreateUser(context.Background(), &proto.CreateUserInfo{
+	userRsp, err := global.UserClient.CreateUser(context.WithValue(context.Background(), "ginContext", c), &proto.CreateUserInfo{
 		NickName: fmt.Sprintf("生鲜%s", RegisterForm.Mobile),
 		Password: RegisterForm.Password,
 		Mobile:   RegisterForm.Mobile,
