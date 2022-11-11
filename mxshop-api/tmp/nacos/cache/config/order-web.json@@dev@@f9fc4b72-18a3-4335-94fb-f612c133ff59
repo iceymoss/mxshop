@@ -1,0 +1,32 @@
+{
+  "name": "order-web",
+  "host": "10.2.94.231",
+  "port": 9092,
+  "tag": ["mxshop", "order", "ice_moss", "web"],
+  "goods_srv": {
+    "name": "goods_srv",
+    "host": "10.2.94.231",
+    "port": 8081
+  },
+  "order_srv": {
+      "name": "order_srv",
+      "host":"10.2.94.231",
+      "port":8083
+  },
+  "inventory_srv":{
+      "name": "inventory_srv",
+      "host":"10.2.94.231",
+      "port":8082
+  },
+  "jwt": {
+    "key": "2Fsa$Xx2WpTOI^Yl!FwohPd6XmVCdnQi"
+  },
+  "sms": {
+    "key": "LTAI5tCjkwb5rRfZtUmHRo3a",
+    "secret": "AaRNRBSeTzplpIzaDIYprdnvsIvZCZ"
+  },
+  "consul": {
+    "host": "10.2.94.231",
+    "port": 8500
+  }
+}

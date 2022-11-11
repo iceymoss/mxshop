@@ -1,0 +1,23 @@
+{
+    "name": "userop-web",
+    "host": "10.2.105.13",
+    "port": 9094,
+    "tags":["iceymoss", "userop", "golang", "web"],
+    "goods_srv":{
+        "name": "goods-srv",
+        "host": "10.2.105.13",
+        "port": 8082
+    },
+    "userOp_srv":{
+        "name":"userop-srv",
+        "host": "10.2.105.13",
+        "port": 8085
+    },
+    "jwt":{
+        "key": "2Fsa$Xx2WpTOI^Yl!FwohPd6XmVCdnQi"
+    },
+    "consul":{
+        "host": "10.2.105.13",
+        "port": 8500
+    }
+}

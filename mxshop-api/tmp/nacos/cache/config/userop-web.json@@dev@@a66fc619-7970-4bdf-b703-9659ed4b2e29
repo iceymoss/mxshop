@@ -1,0 +1,23 @@
+{
+  "name": "userop-web",
+  "host": "10.2.94.231",
+  "port": 9093,
+  "tag": ["mxshop", "userop", "ice_moss", "web"],
+  "goods_srv": {
+    "name": "goods_srv",
+    "host": "10.2.94.231",
+    "port": 8081
+  },
+  "userop_srv": {
+      "name": "userop_srv",
+      "host":"10.2.94.231",
+      "port":8084
+  },
+  "jwt": {
+    "key": "2Fsa$Xx2WpTOI^Yl!FwohPd6XmVCdnQi"
+  },
+  "consul": {
+    "host": "10.2.94.231",
+    "port": 8500
+  }
+}
