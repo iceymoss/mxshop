@@ -8,7 +8,7 @@ import (
 )
 
 func InitBrands(router *gin.RouterGroup) {
-	BrandsRouter := router.Group("brands")
+	BrandsRouter := router.Group("brands").Use(middlewares.Trace())
 	{
 		BrandsRouter.GET("", brands.BrandList)                                                        //获取品牌列表
 		BrandsRouter.POST("", middlewares.JWTAuth(), middlewares.IsAdmin(), brands.NewBrand)          //添加品牌
@@ -16,7 +16,7 @@ func InitBrands(router *gin.RouterGroup) {
 		BrandsRouter.PUT("/:id", middlewares.JWTAuth(), middlewares.IsAdmin(), brands.UpdateBrand)    //修改品牌
 	}
 
-	CategoryBrandRouter := router.Group("categorybrands")
+	CategoryBrandRouter := router.Group("categorybrands").Use(middlewares.Trace())
 	{
 		CategoryBrandRouter.GET("", brands.CategoryBrandList)                                                        // 类别品牌列表页
 		CategoryBrandRouter.DELETE("/:id", middlewares.JWTAuth(), middlewares.IsAdmin(), brands.DeleteCategoryBrand) // 删除类别品牌

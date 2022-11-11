@@ -17,7 +17,7 @@ import (
 )
 
 func List(c *gin.Context) {
-	Rsp, err := global.GoodsSrvClient.GetAllCategorysList(context.Background(), &empty.Empty{})
+	Rsp, err := global.GoodsSrvClient.GetAllCategorysList(context.WithValue(context.Background(), "ginContext", c), &empty.Empty{})
 	if err != nil {
 		api.HandleGrpcErrToHttp(err, c)
 		return
@@ -42,7 +42,7 @@ func Detail(c *gin.Context) {
 
 	reMap := make(map[string]interface{})
 	subCategorys := make([]interface{}, 0)
-	Rsp, err := global.GoodsSrvClient.GetSubCategory(context.Background(), &proto.CategoryListRequest{
+	Rsp, err := global.GoodsSrvClient.GetSubCategory(context.WithValue(context.Background(), "ginContext", c), &proto.CategoryListRequest{
 		Id: int32(id),
 	})
 	if err != nil {
@@ -77,7 +77,7 @@ func New(c *gin.Context) {
 		return
 	}
 
-	Rsp, err := global.GoodsSrvClient.CreateCategory(context.Background(), &proto.CategoryInfoRequest{
+	Rsp, err := global.GoodsSrvClient.CreateCategory(context.WithValue(context.Background(), "ginContext", c), &proto.CategoryInfoRequest{
 		Name:           categoryform.Name,
 		ParentCategory: categoryform.ParentCategory,
 		Level:          categoryform.Level,
@@ -106,7 +106,7 @@ func Delete(c *gin.Context) {
 		return
 	}
 
-	_, err = global.GoodsSrvClient.DeleteCategory(context.Background(), &proto.DeleteCategoryRequest{
+	_, err = global.GoodsSrvClient.DeleteCategory(context.WithValue(context.Background(), "ginContext", c), &proto.DeleteCategoryRequest{
 		Id: int32(id),
 	})
 	if err != nil {
@@ -139,7 +139,7 @@ func Update(c *gin.Context) {
 		categoryinfoRequest.IsTab = *updatecategoryform.IsTab
 	}
 
-	_, err = global.GoodsSrvClient.UpdateCategory(context.Background(), &categoryinfoRequest)
+	_, err = global.GoodsSrvClient.UpdateCategory(context.WithValue(context.Background(), "ginContext", c), &categoryinfoRequest)
 	if err != nil {
 		api.HandleGrpcErrToHttp(err, c)
 		return

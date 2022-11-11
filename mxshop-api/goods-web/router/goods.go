@@ -8,7 +8,7 @@ import (
 )
 
 func InitGoodsRouter(router *gin.RouterGroup) {
-	GoodsRouter := router.Group("goods")
+	GoodsRouter := router.Group("goods").Use(middlewares.Trace())
 	{
 		//中间件的参数位置需要按业务需求而定
 		GoodsRouter.GET("", goods.List)                                                             //商品列表

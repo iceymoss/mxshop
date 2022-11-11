@@ -3,13 +3,15 @@ package goods
 import (
 	"context"
 	"fmt"
+	"net/http"
+	"strconv"
 
 	"mxshop-api/goods-web/forms"
 	"mxshop-api/goods-web/global"
 	"mxshop-api/goods-web/proto"
-	"net/http"
-	"strconv"
 
+	sentinel "github.com/alibaba/sentinel-golang/api"
+	"github.com/alibaba/sentinel-golang/core/base"
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
 	"go.uber.org/zap"
@@ -106,12 +108,25 @@ func List(c *gin.Context) {
 	brandIdInt, _ := strconv.Atoi(brandId)
 	GoodsFilter.Brand = int32(brandIdInt)
 
-	Rsp, err := global.GoodsSrvClient.GoodsList(context.Background(), &GoodsFilter)
+	//对商品列表进行限流
+	e, b := sentinel.Entry("goods-list", sentinel.WithTrafficType(base.Inbound))
+	if b != nil {
+		fmt.Println("限流了")
+		c.JSON(http.StatusTooManyRequests, gin.H{
+			"msg": "请求过于繁忙，请稍后重试",
+		})
+		return
+	}
+
+	Rsp, err := global.GoodsSrvClient.GoodsList(context.WithValue(context.Background(), "ginContext", c), &GoodsFilter)
 	if err != nil {
 		zap.S().Errorw("[list] 查找 【商品】失败", err.Error())
 		HandleValidatorErr(c, err)
 		return
 	}
+
+	//退出当前限流
+	e.Exit()
 
 	var goodsList = make([]interface{}, 0)
 	for _, value := range Rsp.Data {
@@ -156,7 +171,7 @@ func New(c *gin.Context) {
 		return
 	}
 
-	Rsp, err := global.GoodsSrvClient.CreateGoods(context.Background(), &proto.CreateGoodsInfo{
+	Rsp, err := global.GoodsSrvClient.CreateGoods(context.WithValue(context.Background(), "ginContext", c), &proto.CreateGoodsInfo{
 		Name:            GoodsFrom.Name,
 		GoodsSn:         GoodsFrom.GoodsSn,
 		Stocks:          GoodsFrom.Stocks,
@@ -175,8 +190,16 @@ func New(c *gin.Context) {
 		return
 	}
 
-	//如何设置库存
-	//TODO 商品的库存
+	//设置商品库存
+	_, err = global.InventoryClient.SetInv(context.WithValue(context.Background(), "ginContext", c), &proto.GoodsInventoryInfo{
+		GoodsId: Rsp.Id,
+		Num:     GoodsFrom.Stocks,
+	})
+	if err != nil {
+		HandleGrpcErrToHttp(err, c)
+		return
+	}
+
 	c.JSON(http.StatusOK, Rsp)
 }
 
@@ -188,7 +211,7 @@ func Detail(c *gin.Context) {
 		return
 	}
 
-	Rsp, err := global.GoodsSrvClient.GetGoodsDetail(context.Background(), &proto.GoodInfoRequest{
+	Rsp, err := global.GoodsSrvClient.GetGoodsDetail(context.WithValue(context.Background(), "ginContext", c), &proto.GoodInfoRequest{
 		Id: int32(goodsIdInt),
 	})
 	if err != nil {
@@ -196,7 +219,27 @@ func Detail(c *gin.Context) {
 		return
 	}
 
-	//TODO 去库存服务里查询库存
+	//对商品列表进行限流
+	e, b := sentinel.Entry("goods-stock", sentinel.WithTrafficType(base.Inbound))
+	if b != nil {
+		fmt.Println("限流了")
+		c.JSON(http.StatusTooManyRequests, gin.H{
+			"msg": "请求过于繁忙，请稍后重试",
+		})
+		return
+	}
+
+	//去库存服务里查询库存
+	InvRsp, err := global.InventoryClient.InvDetail(context.WithValue(context.Background(), "ginContext", c), &proto.GoodsInventoryInfo{
+		GoodsId: Rsp.Id,
+	})
+	if err != nil {
+		HandleGrpcErrToHttp(err, c)
+		return
+	}
+
+	//退出限流
+	e.Exit()
 
 	RspGoods := map[string]interface{}{
 		"id":          Rsp.Id,
@@ -204,6 +247,7 @@ func Detail(c *gin.Context) {
 		"goods_brief": Rsp.GoodsBrief,
 		"desc":        Rsp.GoodsDesc,
 		"ship_free":   Rsp.ShipFree,
+		"stocks":      InvRsp.Num,
 		"images":      Rsp.Images,
 		"desc_images": Rsp.DescImages,
 		"front_image": Rsp.GoodsFrontImage,
@@ -234,7 +278,7 @@ func Delete(c *gin.Context) {
 		return
 	}
 
-	_, err = global.GoodsSrvClient.DeleteGoods(context.Background(), &proto.DeleteGoodsInfo{
+	_, err = global.GoodsSrvClient.DeleteGoods(context.WithValue(context.Background(), "ginContext", c), &proto.DeleteGoodsInfo{
 		Id: int32(goodsIdInt),
 	})
 	if err != nil {
@@ -254,7 +298,19 @@ func Stocks(c *gin.Context) {
 		return
 	}
 
-	//TODO  商品库存服务
+	//去库存服务里查询库存
+	InvRsp, err := global.InventoryClient.InvDetail(context.WithValue(context.Background(), "ginContext", c), &proto.GoodsInventoryInfo{
+		GoodsId: goodsId,
+	})
+	if err != nil {
+		HandleGrpcErrToHttp(err, c)
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"stocks": InvRsp.Num,
+	})
+
 	return
 }
 
@@ -275,7 +331,7 @@ func UpdateStatus(c *gin.Context) {
 	}
 
 	//获取商品对应的品牌和分类
-	rsp, err := global.GoodsSrvClient.GetGoodsDetail(context.Background(), &proto.GoodInfoRequest{
+	rsp, err := global.GoodsSrvClient.GetGoodsDetail(context.WithValue(context.Background(), "ginContext", c), &proto.GoodInfoRequest{
 		Id: int32(id),
 	})
 	if err != nil {
@@ -325,7 +381,7 @@ func Update(c *gin.Context) {
 		return
 	}
 
-	_, err = global.GoodsSrvClient.UpdateGoods(context.Background(), &proto.CreateGoodsInfo{
+	_, err = global.GoodsSrvClient.UpdateGoods(context.WithValue(context.Background(), "ginContext", c), &proto.CreateGoodsInfo{
 		Id:              int32(goodsIdInt),
 		Name:            GoodsFrom.Name,
 		GoodsSn:         GoodsFrom.GoodsSn,

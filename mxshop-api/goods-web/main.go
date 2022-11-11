@@ -2,21 +2,20 @@ package main
 
 import (
 	"fmt"
-	"mxshop-api/goods-web/utils/register/consul"
 	"os"
 	"os/signal"
 	"syscall"
 
-	uuid "github.com/satori/go.uuid"
-
 	"mxshop-api/goods-web/global"
 	"mxshop-api/goods-web/initialize"
 	"mxshop-api/goods-web/utils"
+	"mxshop-api/goods-web/utils/register/consul"
 	myvalidator "mxshop-api/goods-web/validator"
 
 	"github.com/gin-gonic/gin/binding"
 	ut "github.com/go-playground/universal-translator"
 	"github.com/go-playground/validator/v10"
+	uuid "github.com/satori/go.uuid"
 	"github.com/spf13/viper"
 	"go.uber.org/zap"
 )
@@ -36,7 +35,10 @@ func main() {
 		panic(err)
 	}
 
-	//5. 初始化grpc Client
+	//5.初始化限流/熔断器
+	initialize.InitSentinel()
+
+	//6.初始化grpc Client
 	initialize.InitSrvConn()
 
 	//将线上线下address隔离，固定本地端口，线上动态端口

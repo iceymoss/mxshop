@@ -17,7 +17,7 @@ import (
 
 //BannerList 获取轮播图列表
 func BannerList(c *gin.Context) {
-	Rsp, err := global.GoodsSrvClient.BannerList(context.Background(), &empty.Empty{})
+	Rsp, err := global.GoodsSrvClient.BannerList(context.WithValue(context.Background(), "ginContext", c), &empty.Empty{})
 	if err != nil {
 		api.HandleGrpcErrToHttp(err, c)
 		return
@@ -44,7 +44,7 @@ func NewBanner(c *gin.Context) {
 		return
 	}
 
-	Rsp, err := global.GoodsSrvClient.CreateBanner(context.Background(), &proto.BannerRequest{
+	Rsp, err := global.GoodsSrvClient.CreateBanner(context.WithValue(context.Background(), "ginContext", c), &proto.BannerRequest{
 		Index: int32(BannerForm.Index),
 		Image: BannerForm.Image,
 		Url:   BannerForm.Url,
@@ -70,7 +70,7 @@ func DeleteBanner(c *gin.Context) {
 		c.Status(http.StatusNotFound)
 		return
 	}
-	_, err = global.GoodsSrvClient.DeleteBanner(context.Background(), &proto.BannerRequest{
+	_, err = global.GoodsSrvClient.DeleteBanner(context.WithValue(context.Background(), "ginContext", c), &proto.BannerRequest{
 		Id: int32(id),
 	})
 	if err != nil {
@@ -97,7 +97,7 @@ func UpdateBanner(c *gin.Context) {
 		return
 	}
 
-	_, err = global.GoodsSrvClient.UpdateBanner(context.Background(), &proto.BannerRequest{
+	_, err = global.GoodsSrvClient.UpdateBanner(context.WithValue(context.Background(), "ginContext", c), &proto.BannerRequest{
 		Id:    int32(id),
 		Index: int32(updateBanner.Index),
 		Image: updateBanner.Image,
