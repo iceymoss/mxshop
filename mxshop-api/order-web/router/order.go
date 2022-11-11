@@ -8,7 +8,7 @@ import (
 )
 
 func InitOrderRouter(router *gin.RouterGroup) {
-	OrderRouter := router.Group("order").Use(middlewares.JWTAuth())
+	OrderRouter := router.Group("order").Use(middlewares.JWTAuth()).Use(middlewares.Trace())
 	{
 		//中间件的参数位置需要按业务需求而定
 		OrderRouter.GET("", order.List)            //订单列表

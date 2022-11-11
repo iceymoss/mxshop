@@ -2,6 +2,7 @@ package order
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -11,6 +12,8 @@ import (
 	"mxshop-api/order-web/models"
 	"mxshop-api/order-web/proto"
 
+	sentinel "github.com/alibaba/sentinel-golang/api"
+	"github.com/alibaba/sentinel-golang/core/base"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 )
@@ -35,12 +38,25 @@ func List(ctx *gin.Context) {
 		Request.UserId = int32(userId.(uint))
 	}
 
-	Rsp, err := global.OrderSrvClient.OrderList(context.Background(), &Request)
+	//对商品列表进行限流
+	e, b := sentinel.Entry("order_list", sentinel.WithTrafficType(base.Inbound))
+	if b != nil {
+		fmt.Println("限流了")
+		ctx.JSON(http.StatusTooManyRequests, gin.H{
+			"msg": "请求过于繁忙，请稍后重试",
+		})
+		return
+	}
+
+	Rsp, err := global.OrderSrvClient.OrderList(context.WithValue(context.Background(), "ginContext", ctx), &Request)
 	if err != nil {
 		zap.S().Info("[List] 获取【订单列表】失败")
 		api.HandleGrpcErrToHttp(err, ctx)
 		return
 	}
+
+	//退出限流
+	e.Exit()
 
 	OrderList := make([]interface{}, 0)
 	for _, Item := range Rsp.Data {
@@ -66,6 +82,7 @@ func List(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, ReMap)
 }
 
+//CreaOrder 新建订单
 func CreatOrder(ctx *gin.Context) {
 	var OrderForm forms.OrderForms
 	if err := ctx.ShouldBindJSON(&OrderForm); err != nil {
@@ -76,7 +93,17 @@ func CreatOrder(ctx *gin.Context) {
 
 	userId, _ := ctx.Get("userId")
 
-	Rsp, err := global.OrderSrvClient.CreateOrder(context.Background(), &proto.OrderRequest{
+	//对商品列表进行限流
+	e, b := sentinel.Entry("create_order", sentinel.WithTrafficType(base.Inbound))
+	if b != nil {
+		fmt.Println("限流了")
+		ctx.JSON(http.StatusTooManyRequests, gin.H{
+			"msg": "请求过于繁忙，请稍后重试",
+		})
+		return
+	}
+
+	Rsp, err := global.OrderSrvClient.CreateOrder(context.WithValue(context.Background(), "ginContext", ctx), &proto.OrderRequest{
 		UserId:  int32(userId.(uint)),
 		Name:    OrderForm.Name,
 		Address: OrderForm.Address,
@@ -88,6 +115,9 @@ func CreatOrder(ctx *gin.Context) {
 		api.HandleGrpcErrToHttp(err, ctx)
 		return
 	}
+
+	//退出限流
+	e.Exit()
 
 	//TODO 此时的逻辑跳转至支付宝支付页面，可通过web层或是srv层返回支付宝支付URL
 	ctx.JSON(http.StatusOK, gin.H{
@@ -115,7 +145,7 @@ func DetailOrder(ctx *gin.Context) {
 		OrderRequest.UserId = int32(userId.(uint))
 	}
 
-	Rsp, err := global.OrderSrvClient.OrderDetail(context.Background(), &OrderRequest)
+	Rsp, err := global.OrderSrvClient.OrderDetail(context.WithValue(context.Background(), "ginContext", ctx), &OrderRequest)
 	if err != nil {
 		zap.S().Info("获取订单详情失败")
 		api.HandleGrpcErrToHttp(err, ctx)

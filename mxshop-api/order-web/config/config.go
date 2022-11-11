@@ -24,6 +24,13 @@ type ConsulConfig struct {
 	Port int    `mapstructure:"port" json:"port"`
 }
 
+//Tracing 链路追踪
+type Tracing struct {
+	Host string `mapstructure:"host" json:"host"`
+	Port int    `mapstructure:"port" json:"port"`
+	Name string `mapstructure:"name" json:"name"`
+}
+
 //ServerConfig  映射服务配置
 type ServerConfig struct {
 	Name             string         `mapstructure:"name" json:"name"`
@@ -36,6 +43,7 @@ type ServerConfig struct {
 	JWTInfo          JWTConfig      `mapstructure:"jwt" json:"jwt"`
 	AliSms           AliSmsConfig   `mapstructure:"sms" json:"sms"`
 	ConsulInfo       ConsulConfig   `mapstructure:"consul" json:"consul"`
+	Tracing          Tracing        `mapstructure:"tracing" json:"tracing"`
 }
 
 //NacosConfig 配置中心配置

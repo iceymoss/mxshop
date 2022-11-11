@@ -5,8 +5,10 @@ import (
 
 	"mxshop-api/order-web/global"
 	"mxshop-api/order-web/proto"
+	"mxshop-api/order-web/utils/otgrpc"
 
 	_ "github.com/mbobakov/grpc-consul-resolver" // It's important
+	"github.com/opentracing/opentracing-go"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
 )
@@ -19,6 +21,7 @@ func InitSrvConn() {
 		fmt.Sprintf("consul://%s:%d/%s?wait=14s&tag=srv", consul.Host, consul.Port, global.ServerConfig.OrderSerInfo.Name),
 		grpc.WithInsecure(),
 		grpc.WithDefaultServiceConfig(`{"loadBalancingPolicy": "round_robin"}`),
+		grpc.WithUnaryInterceptor(otgrpc.OpenTracingClientInterceptor(opentracing.GlobalTracer())),
 	)
 
 	fmt.Println(global.ServerConfig)
@@ -35,6 +38,7 @@ func InitSrvConn() {
 		fmt.Sprintf("consul://%s:%d/%s?wait=14s&tag=srv", consul.Host, consul.Port, global.ServerConfig.GoodsSerInfo.Name),
 		grpc.WithInsecure(),
 		grpc.WithDefaultServiceConfig(`{"loadBalancingPolicy": "round_robin"}`),
+		grpc.WithUnaryInterceptor(otgrpc.OpenTracingClientInterceptor(opentracing.GlobalTracer())),
 	)
 
 	fmt.Println(global.ServerConfig)
@@ -46,10 +50,12 @@ func InitSrvConn() {
 	goodsClient := proto.NewGoodsClient(Goodsconn)
 	global.GoodsSrvClient = goodsClient
 
+	//连接库存服务
 	Inventoryconn, err := grpc.Dial(
 		fmt.Sprintf("consul://%s:%d/%s?wait=14s&tag=srv", consul.Host, consul.Port, global.ServerConfig.InventorySerInfo.Name),
 		grpc.WithInsecure(),
 		grpc.WithDefaultServiceConfig(`{"loadBalancingPolicy": "round_robin"}`),
+		grpc.WithUnaryInterceptor(otgrpc.OpenTracingClientInterceptor(opentracing.GlobalTracer())),
 	)
 
 	fmt.Println(global.ServerConfig)
@@ -58,6 +64,7 @@ func InitSrvConn() {
 		zap.S().Errorw("[InitSrvConn] 连接 【库存服务】失败", err.Error())
 		return
 	}
+
 	InventoryClient := proto.NewInventoryClient(Inventoryconn)
 	global.InventorySrvClient = InventoryClient
 }
