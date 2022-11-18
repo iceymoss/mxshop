@@ -22,6 +22,7 @@ require (
 	github.com/opentracing/opentracing-go v1.2.0
 	github.com/pelletier/go-toml/v2 v2.0.2 // indirect
 	github.com/satori/go.uuid v1.2.0
+	github.com/smartwalle/alipay/v3 v3.1.8 // indirect
 	github.com/spf13/viper v1.12.0
 	github.com/stretchr/testify v1.7.2
 	github.com/uber/jaeger-client-go v2.30.0+incompatible
