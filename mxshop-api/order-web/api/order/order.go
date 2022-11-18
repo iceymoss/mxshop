@@ -15,6 +15,7 @@ import (
 	sentinel "github.com/alibaba/sentinel-golang/api"
 	"github.com/alibaba/sentinel-golang/core/base"
 	"github.com/gin-gonic/gin"
+	"github.com/smartwalle/alipay/v3"
 	"go.uber.org/zap"
 )
 
@@ -120,8 +121,41 @@ func CreatOrder(ctx *gin.Context) {
 	e.Exit()
 
 	//TODO 此时的逻辑跳转至支付宝支付页面，可通过web层或是srv层返回支付宝支付URL
+	client, err := alipay.New(global.ServerConfig.Alipay.AppID, global.ServerConfig.Alipay.PrivateKey, false)
+	if err != nil {
+		zap.S().Info("初始化支付宝支付对象失败")
+		api.HandleGrpcErrToHttp(err, ctx)
+		return
+	}
+
+	err = client.LoadAliPayPublicKey(global.ServerConfig.Alipay.AlipayPublicKey)
+	if err != nil {
+		zap.S().Info("加载alipay公钥失败")
+		api.HandleGrpcErrToHttp(err, ctx)
+		return
+	}
+
+	p := alipay.TradePagePay{}
+	p.NotifyURL = global.ServerConfig.Alipay.NoticeURL
+	p.ReturnURL = global.ServerConfig.Alipay.ReturnURL
+	p.Subject = "mxshop订单" + Rsp.OrderSn
+	p.OutTradeNo = Rsp.OrderSn
+	p.TotalAmount = strconv.FormatFloat(float64(Rsp.Total), 'f', 2, 64)
+	p.ProductCode = "FAST_INSTANT_TRADE_PAY"
+
+	res, err := client.TradePagePay(p)
+	if err != nil {
+		zap.S().Info("生成alipay支付url失败")
+		api.HandleGrpcErrToHttp(err, ctx)
+		ctx.JSON(http.StatusInternalServerError, gin.H{
+			"msg": err.Error(),
+		})
+		return
+	}
+
 	ctx.JSON(http.StatusOK, gin.H{
-		"id": Rsp.Id,
+		"id":         Rsp.Id,
+		"alipay_url": res.String(),
 	})
 }
 
@@ -178,6 +212,40 @@ func DetailOrder(ctx *gin.Context) {
 		GoodsList = append(GoodsList, goodsItem)
 	}
 
+	//生成支付url
+	client, err := alipay.New(global.ServerConfig.Alipay.AppID, global.ServerConfig.Alipay.PrivateKey, false)
+	if err != nil {
+		zap.S().Info("初始化支付宝支付对象失败")
+		api.HandleGrpcErrToHttp(err, ctx)
+		return
+	}
+
+	err = client.LoadAliPayPublicKey(global.ServerConfig.Alipay.AlipayPublicKey)
+	if err != nil {
+		zap.S().Info("加载alipay公钥失败")
+		api.HandleGrpcErrToHttp(err, ctx)
+		return
+	}
+
+	p := alipay.TradePagePay{}
+	p.NotifyURL = global.ServerConfig.Alipay.NoticeURL
+	p.ReturnURL = global.ServerConfig.Alipay.ReturnURL
+	p.Subject = "mxshop订单" + Rsp.OrderInfo.OrderSn
+	p.OutTradeNo = Rsp.OrderInfo.OrderSn
+	p.TotalAmount = strconv.FormatFloat(float64(Rsp.OrderInfo.Total), 'f', 2, 64)
+	p.ProductCode = "FAST_INSTANT_TRADE_PAY"
+
+	res, err := client.TradePagePay(p)
+	if err != nil {
+		zap.S().Info("生成alipay支付url失败")
+		api.HandleGrpcErrToHttp(err, ctx)
+		ctx.JSON(http.StatusInternalServerError, gin.H{
+			"msg": err.Error(),
+		})
+		return
+	}
+
+	reMap["alipay_url"] = res.String()
 	reMap["goods"] = GoodsList
 	ctx.JSON(http.StatusOK, reMap)
 }
