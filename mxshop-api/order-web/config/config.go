@@ -31,6 +31,14 @@ type Tracing struct {
 	Name string `mapstructure:"name" json:"name"`
 }
 
+type AlipayConfig struct {
+	AppID           string `mapstructure:"appid" json:"appid"`
+	PrivateKey      string `mapstructure:"private_key" json:"private_key"`
+	AlipayPublicKey string `mapstructure:"alipaypublic_key" json:"alipaypublic_key"`
+	NoticeURL       string `mapstructure:"notice_url" json:"notice_url"`
+	ReturnURL       string `mapstructure:"return_url" json:"return_url"`
+}
+
 //ServerConfig  映射服务配置
 type ServerConfig struct {
 	Name             string         `mapstructure:"name" json:"name"`
@@ -44,6 +52,7 @@ type ServerConfig struct {
 	AliSms           AliSmsConfig   `mapstructure:"sms" json:"sms"`
 	ConsulInfo       ConsulConfig   `mapstructure:"consul" json:"consul"`
 	Tracing          Tracing        `mapstructure:"tracing" json:"tracing"`
+	Alipay           AlipayConfig   `mapstructure:"alipay" json:"alipay"`
 }
 
 //NacosConfig 配置中心配置
