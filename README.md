@@ -26,7 +26,8 @@ docker run --name nacos-standalone -e MODE=standalone -e JVM_XMS=512m -e JVM_XMX
 ### Elasticsearch的安装(docker)
 [Elasticsearch安装](https://learnku.com/articles/72845)
 
-### 功能介绍
+### 项目介绍
+网站地址：http://iceymoss.toop:8089
 * 基于JWT做访问鉴权token，Gin做路由分发、表单验证、解决跨域等。
 
 * 登录/注册功能：采用sever和web双层架构、使用viper包做配置解析、web层基于Gin做路由转发、使用redis实现注册验证码缓存服务、使用base64生成验证码图片做登录验证、srv层使用MD5盐值加密保证密码注册者知道的唯一性。
@@ -37,6 +38,3 @@ docker run --name nacos-standalone -e MODE=standalone -e JVM_XMS=512m -e JVM_XMX
 * 订单服务：基于grpc实现订单相关服务及购物车相关服务等各类接口，使用本地mysql事务保证本地数据一致性，从使用rocketMQ从订单服务到查询商品服务(跨服务)，调用库存服务扣减库存(跨服务)的跨微服务调用，保证信息一致性。
 * 用户接口服务： 为用户提供操作接口其中实现了简单的地址，留言, 收藏等。
 * 基于Jaeger做微服务间链路追踪，使用Sentinel实现限流。
-
-	
-
