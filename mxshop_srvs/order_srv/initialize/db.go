@@ -19,7 +19,7 @@ import (
 )
 
 func InitDB() {
-	//dsn := "root:Qq/2013XiaoKUang@tcp(127.0.0.1:3306)/gorm_test?charset=utf8mb4&parseTime=True&loc=Local"
+	//dsn := "root:jidfhidjfdig@tcp(127.0.0.1:3306)/gorm_test?charset=utf8mb4&parseTime=True&loc=Local"
 	c := global.ServerConfig.MysqlInfo
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=utf8mb4&parseTime=True&loc=Local", c.User, c.Password, c.Host, c.Port, c.Name)
 	//用于输出使用的sql语句

@@ -6,15 +6,15 @@
 #  port: 8080
 #
 #jwt:
-#  key: '2Fsa$Xx2WpTOI^Yl!FwohPd6XmVCdnQi'
+#  key: '2Fsa$VCdnQi'
 #
 #sms:
-#  key: 'LTAI5tCjkwb5rRfZtUmHRo3a'
-#  secret: 'AaRNRBSeTzplpIzaDIYprdnvsIvZCZ'
+#  key: 'LTAIHRo3a'
+#  secret: 'AaRNRvZCZ'
 #
 #params:
 #  sign_name: '生鲜小店'
-#  code: 'SMS_244610581'
+#  code: 'SMS_2453481'
 #
 #redis:
 #  host: '127.0.0.1'

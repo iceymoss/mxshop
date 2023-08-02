@@ -13,7 +13,7 @@ import (
 	"gorm.io/gorm/schema"
 )
 
-//Paginate 将数据进行分页
+// Paginate 将数据进行分页
 func Paginate(page, pageSize int) func(db *gorm.DB) *gorm.DB {
 	return func(db *gorm.DB) *gorm.DB {
 		if page == 0 {
@@ -33,7 +33,7 @@ func Paginate(page, pageSize int) func(db *gorm.DB) *gorm.DB {
 }
 
 func main() {
-	dsn := "root:Qq/2013XiaoKUang@tcp(127.0.0.1:3306)/mxshop_userop_srv?charset=utf8mb4&parseTime=True&loc=Local"
+	dsn := "root:hihfidhfid@tcp(127.0.0.1:3306)/mxshop_userop_srv?charset=utf8mb4&parseTime=True&loc=Local"
 
 	//用于输出使用的sql语句
 	newLogger := logger.New(
