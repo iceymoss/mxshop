@@ -13,7 +13,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-//JWTAuth 验证token
+// JWTAuth 验证token
 func JWTAuth() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		// 我们这里jwt鉴权取头部信息 x-token 登录时回返回token信息 这里前端需要把token存储到cookie或者本地localSstorage中 不过需要跟后端协商过期时间 可以约定刷新令牌或者重新登录
@@ -52,7 +52,7 @@ func JWTAuth() gin.HandlerFunc {
 	}
 }
 
-//JWT 实现JWT服务
+// JWT 实现JWT服务
 type JWT struct {
 	SigningKey []byte
 }
@@ -64,7 +64,7 @@ var (
 	TokenInvalid     = errors.New("Couldn't handle this token:")
 )
 
-//NewJWT 实例化对象
+// NewJWT 实例化对象
 func NewJWT() *JWT {
 	return &JWT{
 		//写入签名
@@ -72,7 +72,7 @@ func NewJWT() *JWT {
 	}
 }
 
-//CreateToken 创建一个token
+// CreateToken 创建一个token
 func (j *JWT) CreateToken(claims models.CustomClaims) (string, error) {
 	//生成token的前两段
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
@@ -80,7 +80,7 @@ func (j *JWT) CreateToken(claims models.CustomClaims) (string, error) {
 	return token.SignedString(j.SigningKey)
 }
 
-//ParseToken 解析token
+// ParseToken 解析token
 func (j *JWT) ParseToken(tokenString string) (*models.CustomClaims, error) {
 	//将token字符串传入,根据CustomClaims 结构体定义的相关属性要求进行校验
 	token, err := jwt.ParseWithClaims(tokenString, &models.CustomClaims{}, func(token *jwt.Token) (i interface{}, e error) {
@@ -110,10 +110,9 @@ func (j *JWT) ParseToken(tokenString string) (*models.CustomClaims, error) {
 		return nil, TokenInvalid
 
 	}
-
 }
 
-//RefreshToken 更新token
+// RefreshToken 更新token
 func (j *JWT) RefreshToken(tokenString string) (string, error) {
 	jwt.TimeFunc = func() time.Time {
 		return time.Unix(0, 0)
