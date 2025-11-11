@@ -2,6 +2,7 @@ package initialize
 
 import (
 	"fmt"
+
 	"mxshop-api/goods-web/global"
 	"mxshop-api/goods-web/proto"
 	"mxshop-api/goods-web/utils/otgrpc"
@@ -12,7 +13,7 @@ import (
 	"google.golang.org/grpc"
 )
 
-//InitSrvConn 连接到consul注册中心并对服务做负载均衡
+// InitSrvConn 连接到consul注册中心并对服务做负载均衡
 func InitSrvConn() {
 	consul := global.ServerConfig.ConsulInfo
 	conn, err := grpc.Dial(

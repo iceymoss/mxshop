@@ -19,7 +19,7 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-//HandleValidatorErr 表单验证错误处理返回
+// HandleValidatorErr 表单验证错误处理返回
 func HandleValidatorErr(c *gin.Context, err error) {
 	fmt.Println(err.Error())
 	errs, ok := err.(validator.ValidationErrors)
@@ -33,7 +33,7 @@ func HandleValidatorErr(c *gin.Context, err error) {
 	})
 }
 
-//HandleGrpcErrToHttp grpc状态码转http
+// HandleGrpcErrToHttp grpc状态码转http
 func HandleGrpcErrToHttp(err error, c *gin.Context) {
 	if err != nil {
 		if e, ok := status.FromError(err); ok {
@@ -162,7 +162,7 @@ func List(c *gin.Context) {
 	c.JSON(http.StatusOK, rspMap)
 }
 
-//New 添加商品
+// New 添加商品
 func New(c *gin.Context) {
 
 	GoodsFrom := forms.GoodsFrom{}
@@ -269,7 +269,7 @@ func Detail(c *gin.Context) {
 	c.JSON(http.StatusOK, RspGoods)
 }
 
-//Delete 删除商品
+// Delete 删除商品
 func Delete(c *gin.Context) {
 	goodsId := c.Param("id")
 	goodsIdInt, err := strconv.ParseInt(goodsId, 10, 32)
@@ -289,7 +289,7 @@ func Delete(c *gin.Context) {
 	return
 }
 
-//Stocks 获取库存
+// Stocks 获取库存
 func Stocks(c *gin.Context) {
 	goodsId := c.Param("id")
 	_, err := strconv.ParseInt(goodsId, 10, 32)
@@ -298,9 +298,15 @@ func Stocks(c *gin.Context) {
 		return
 	}
 
+	goodsIdInt, err := strconv.Atoi(goodsId)
+	if err != nil {
+		c.Status(http.StatusBadRequest)
+		return
+	}
+
 	//去库存服务里查询库存
 	InvRsp, err := global.InventoryClient.InvDetail(context.WithValue(context.Background(), "ginContext", c), &proto.GoodsInventoryInfo{
-		GoodsId: goodsId,
+		GoodsId: int32(goodsIdInt),
 	})
 	if err != nil {
 		HandleGrpcErrToHttp(err, c)
@@ -314,7 +320,7 @@ func Stocks(c *gin.Context) {
 	return
 }
 
-//UpdateStatus 更新商品状态
+// UpdateStatus 更新商品状态
 func UpdateStatus(c *gin.Context) {
 	//获取表单数据
 	goodsStatusForm := forms.GoodsStatusForm{}
@@ -366,7 +372,7 @@ func UpdateStatus(c *gin.Context) {
 	})
 }
 
-//Update 更新商品信息
+// Update 更新商品信息
 func Update(c *gin.Context) {
 	GoodsFrom := forms.GoodsFrom{}
 	if err := c.ShouldBind(&GoodsFrom); err != nil {

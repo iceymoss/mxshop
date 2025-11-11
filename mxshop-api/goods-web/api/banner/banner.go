@@ -3,19 +3,19 @@ package banner
 import (
 	"context"
 	"fmt"
-	"mxshop-api/goods-web/forms"
-	"mxshop-api/goods-web/proto"
 	"net/http"
 	"strconv"
 
+	"mxshop-api/goods-web/forms"
 	"mxshop-api/goods-web/global"
+	"mxshop-api/goods-web/proto"
 	"mxshop-api/user-web/api"
 
 	"github.com/gin-gonic/gin"
 	"github.com/golang/protobuf/ptypes/empty"
 )
 
-//BannerList 获取轮播图列表
+// BannerList 获取轮播图列表
 func BannerList(c *gin.Context) {
 	Rsp, err := global.GoodsSrvClient.BannerList(context.WithValue(context.Background(), "ginContext", c), &empty.Empty{})
 	if err != nil {
@@ -36,7 +36,7 @@ func BannerList(c *gin.Context) {
 	c.JSON(http.StatusOK, data)
 }
 
-//NewBanner 添加轮播图
+// NewBanner 添加轮播图
 func NewBanner(c *gin.Context) {
 	BannerForm := forms.BannerForm{}
 	if err := c.ShouldBindJSON(&BannerForm); err != nil {
@@ -62,7 +62,7 @@ func NewBanner(c *gin.Context) {
 	c.JSON(http.StatusOK, response)
 }
 
-//DeleteBanner 删除轮播图
+// DeleteBanner 删除轮播图
 func DeleteBanner(c *gin.Context) {
 	bannerId := c.Param("id")
 	id, err := strconv.ParseInt(bannerId, 10, 32)
@@ -80,7 +80,7 @@ func DeleteBanner(c *gin.Context) {
 	c.JSON(http.StatusOK, "")
 }
 
-//UpdateBanner 更新轮播图
+// UpdateBanner 更新轮播图
 func UpdateBanner(c *gin.Context) {
 	updateBanner := forms.BannerForm{}
 	if err := c.ShouldBindJSON(&updateBanner); err != nil {

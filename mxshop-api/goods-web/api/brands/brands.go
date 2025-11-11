@@ -2,18 +2,18 @@ package brands
 
 import (
 	"context"
+	"net/http"
+	"strconv"
 
 	"mxshop-api/goods-web/api"
 	"mxshop-api/goods-web/forms"
 	"mxshop-api/goods-web/global"
 	"mxshop-api/goods-web/proto"
-	"net/http"
-	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
 
-//BrandList 获取品牌列表
+// BrandList 获取品牌列表
 func BrandList(ctx *gin.Context) {
 	pn := ctx.DefaultQuery("pn", "0")
 	pnInt, _ := strconv.Atoi(pn)
@@ -48,7 +48,7 @@ func BrandList(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, reMap)
 }
 
-//NewBrand 新建品牌
+// NewBrand 新建品牌
 func NewBrand(c *gin.Context) {
 	BrandForm := forms.BrandForm{}
 	if err := c.ShouldBindJSON(&BrandForm); err != nil {
@@ -73,7 +73,7 @@ func NewBrand(c *gin.Context) {
 	c.JSON(http.StatusOK, Response)
 }
 
-//DeleteBrand 删除品牌
+// DeleteBrand 删除品牌
 func DeleteBrand(ctx *gin.Context) {
 	id := ctx.Param("id")
 	i, err := strconv.ParseInt(id, 10, 32)
@@ -90,7 +90,7 @@ func DeleteBrand(ctx *gin.Context) {
 	ctx.Status(http.StatusOK)
 }
 
-//UpdateBrand 更新品牌
+// UpdateBrand 更新品牌
 func UpdateBrand(c *gin.Context) {
 	UpdateBrandForm := forms.BrandForm{}
 	if err := c.ShouldBindJSON(&UpdateBrandForm); err != nil {
@@ -118,7 +118,7 @@ func UpdateBrand(c *gin.Context) {
 	c.Status(http.StatusOK)
 }
 
-//GetCategoryBrand 获取分类-品牌详情
+// GetCategoryBrand 获取分类-品牌详情
 func GetCategoryBrand(c *gin.Context) {
 	cbid := c.Param("id")
 	id, err := strconv.ParseInt(cbid, 10, 32)
@@ -138,7 +138,7 @@ func GetCategoryBrand(c *gin.Context) {
 	c.JSON(http.StatusOK, Rsp.Data)
 }
 
-//GetCategoryBrandList 获取分类-品牌列表，获取分类下的所有品牌
+// GetCategoryBrandList 获取分类-品牌列表，获取分类下的所有品牌
 func GetCategoryBrandList(ctx *gin.Context) {
 	id := ctx.Param("id")
 	i, err := strconv.ParseInt(id, 10, 32)
@@ -168,7 +168,7 @@ func GetCategoryBrandList(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, result)
 }
 
-//CategoryBrandList 获取分类-品牌表关系
+// CategoryBrandList 获取分类-品牌表关系
 func CategoryBrandList(ctx *gin.Context) {
 
 	pn := ctx.DefaultQuery("pn", "0")
@@ -210,7 +210,7 @@ func CategoryBrandList(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, reMap)
 }
 
-//NewCategoryBrand 新建分类-品牌关系
+// NewCategoryBrand 新建分类-品牌关系
 func NewCategoryBrand(ctx *gin.Context) {
 	categoryBrandForm := forms.CategoryBrandForm{}
 	if err := ctx.ShouldBindJSON(&categoryBrandForm); err != nil {
@@ -234,7 +234,7 @@ func NewCategoryBrand(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, response)
 }
 
-//UpdateCategoryBrand 更新分类-品牌关系
+// UpdateCategoryBrand 更新分类-品牌关系
 func UpdateCategoryBrand(ctx *gin.Context) {
 	categoryBrandForm := forms.CategoryBrandForm{}
 	if err := ctx.ShouldBindJSON(&categoryBrandForm); err != nil {
@@ -261,7 +261,7 @@ func UpdateCategoryBrand(ctx *gin.Context) {
 	ctx.Status(http.StatusOK)
 }
 
-//DeleteCategoryBrand 删除分类-品牌关系
+// DeleteCategoryBrand 删除分类-品牌关系
 func DeleteCategoryBrand(ctx *gin.Context) {
 	id := ctx.Param("id")
 	i, err := strconv.ParseInt(id, 10, 32)
