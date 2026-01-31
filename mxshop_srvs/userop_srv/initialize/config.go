@@ -3,7 +3,6 @@ package initialize
 import (
 	"encoding/json"
 	"fmt"
-
 	"mxshop_srvs/userop_srv/global"
 
 	"github.com/nacos-group/nacos-sdk-go/clients"
@@ -13,7 +12,7 @@ import (
 	"go.uber.org/zap"
 )
 
-//GetEnvInfo 通过环境变量 将线上线下环境隔离
+// GetEnvInfo 通过环境变量 将线上线下环境隔离
 func GetEnvInfo(env string) bool {
 	viper.AutomaticEnv()
 	return viper.GetBool(env)
