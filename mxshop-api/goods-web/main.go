@@ -12,6 +12,7 @@ import (
 	"mxshop-api/goods-web/utils/register/consul"
 	myvalidator "mxshop-api/goods-web/validator"
 
+
 	"github.com/gin-gonic/gin/binding"
 	ut "github.com/go-playground/universal-translator"
 	"github.com/go-playground/validator/v10"
@@ -26,6 +27,7 @@ func main() {
 
 	//2. 初始化配置
 	initialize.InitConfig()
+	migratehint.LogIfEnabled("goods-web")
 
 	//3. 初始化Router
 	Router := initialize.Routers()

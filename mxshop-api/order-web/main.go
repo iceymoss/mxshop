@@ -6,6 +6,7 @@ import (
 	"os/signal"
 	"syscall"
 
+	"mxshop-api/internal/migratehint"
 	"mxshop-api/order-web/global"
 	"mxshop-api/order-web/initialize"
 	"mxshop-api/order-web/utils"
@@ -26,6 +27,7 @@ func main() {
 
 	//2. 初始化配置
 	initialize.InitConfig()
+	migratehint.LogIfEnabled("order-web")
 
 	//3. 初始化Router
 	Router := initialize.Routers()

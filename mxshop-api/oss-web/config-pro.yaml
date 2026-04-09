@@ -1,3 +1,4 @@
+# 生产环境：连接 Nacos 的 bootstrap（与 config-debug.yaml 结构相同；文件名固定为 config-pro.yaml）
 host: '192.168.0.104'
 port: 8848
 namespace: 'c1872978-d51c-4188-a497-4e0cd20b97d5'

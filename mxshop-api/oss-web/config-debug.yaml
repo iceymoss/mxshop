@@ -1,3 +1,4 @@
+# debug 环境：连接 Nacos 的 bootstrap（字段名与 oss-web/config.NacosConfig 的 mapstructure 一致）
 host: '10.2.103.145'
 port: 8848
 namespace: 'fe432146-9559-44d1-8245-3541feacc9cf'

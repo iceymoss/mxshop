@@ -33,9 +33,9 @@ func main() {
 
 	//3.初始化数据库
 	initialize.InitDB()
+	initialize.RunAutoMigrate()
 
 	//将线上线下address隔离，固定本地端口，线上动态端口
-
 	IP := flag.String("ip", global.ServerConfig.Host, "ip地址")
 	Port := flag.Int("port", 8081, "端口号")
 	flag.Parse()
@@ -68,7 +68,7 @@ func main() {
 
 	client, err := api.NewClient(cfg)
 	if err != nil {
-		panic(err)
+		zap.S().Fatal("consul连接失败", err)
 	}
 	//生成对应的检查对象
 	check := &api.AgentServiceCheck{

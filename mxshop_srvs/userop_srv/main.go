@@ -4,13 +4,13 @@ import (
 	"flag"
 	"fmt"
 	"log"
-	"mxshop_srvs/userop_srv/handler"
 	"net"
 	"os"
 	"os/signal"
 	"syscall"
 
 	"mxshop_srvs/userop_srv/global"
+	"mxshop_srvs/userop_srv/handler"
 	"mxshop_srvs/userop_srv/initialize"
 	"mxshop_srvs/userop_srv/proto"
 	"mxshop_srvs/userop_srv/utils"
@@ -33,6 +33,7 @@ func main() {
 
 	//3.初始化数据库
 	initialize.InitDB()
+	initialize.RunAutoMigrate()
 	initialize.InitRs()
 
 	//将线上线下address隔离，固定本地端口，线上动态端口

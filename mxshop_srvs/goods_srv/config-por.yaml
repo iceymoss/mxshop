@@ -1,0 +1,9 @@
+# 生产 / 非 debug 环境：仅包含连接 Nacos 所需信息（与 config-debug.yaml 结构相同，请改为线上 Nacos 与 namespace）
+nacos:
+  host: '127.0.0.1'
+  port: 8848
+  namespace_id: '请填写生产-namespace-id'
+  user: 'nacos'
+  password: 'nacos'
+  data_id: 'goods-srv.json'
+  group: 'pro'

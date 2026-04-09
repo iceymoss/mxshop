@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"mxshop-api/internal/migratehint"
 	"mxshop-api/oss-web/global"
 	"mxshop-api/oss-web/initialize"
 	"mxshop-api/oss-web/utils"
@@ -21,6 +22,7 @@ func main() {
 
 	//2. 初始化配置文件
 	initialize.InitConfig()
+	migratehint.LogIfEnabled("oss-web")
 
 	//3. 初始化routers
 	Router := initialize.Routers()

@@ -1,3 +1,11 @@
 .idea
 .vscode
+
+# macOS
 .DS_Store
+
+# 本地环境与全量配置（由各服务目录下 .env.sample / local-server.yaml.example 复制生成）
+**/.env
+**/local-server.yaml
+
+**/tmp/*

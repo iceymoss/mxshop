@@ -35,6 +35,7 @@ func main() {
 
 	//3.初始化数据库
 	initialize.InitDB()
+	initialize.RunAutoMigrate()
 	initialize.InitRs()
 
 	//将线上线下address隔离，固定本地端口，线上动态端口

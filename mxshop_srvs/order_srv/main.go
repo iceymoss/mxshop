@@ -45,6 +45,7 @@ func main() {
 
 	//4.初始化数据库
 	initialize.InitDB()
+	initialize.RunAutoMigrate()
 	initialize.InitRs()
 
 	//5.初始化微服务连接

@@ -1,0 +1,33 @@
+name: order-srv
+host: 127.0.0.1
+port: 8083
+mysql:
+  host: 127.0.0.1
+  port: 3306
+  db: mxshop_order_srv
+  user: root
+  password: changeme
+consul:
+  host: 127.0.0.1
+  port: 8500
+redis:
+  host: 127.0.0.1
+  port: 6379
+tags:
+  - iceymoss
+  - order
+  - golang
+  - srv
+goods_srv:
+  name: goods-srv
+inventory_srv:
+  name: inventory-srv
+rocket:
+  host: 127.0.0.1
+  port: 9876
+  group_name: mxshop-order
+  topic: order_timeout
+tracing:
+  host: 127.0.0.1
+  port: 6831
+  name: mxshop

@@ -1,0 +1,20 @@
+name: userop-srv
+host: 127.0.0.1
+port: 8085
+mysql:
+  host: 127.0.0.1
+  port: 3306
+  db: mxshop_userop_srv
+  user: root
+  password: changeme
+consul:
+  host: 127.0.0.1
+  port: 8500
+redis:
+  host: 127.0.0.1
+  port: 6379
+tags:
+  - iceymoss
+  - userop
+  - golang
+  - srv

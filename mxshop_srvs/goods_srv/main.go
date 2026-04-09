@@ -33,6 +33,7 @@ func main() {
 
 	//3.初始化数据库
 	initialize.InitDB()
+	initialize.RunAutoMigrate()
 	//初始化es
 	initialize.InitEs()
 
